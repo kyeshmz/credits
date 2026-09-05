@@ -1,0 +1,22 @@
+---
+import { credits, categories } from "@wholeearth/credits-data";
+import Base from "../layouts/Base.astro";
+import CreditsTable from "../components/CreditsTable.astro";
+
+const providers = new Set(credits.map((credit) => credit.provider));
+const latestUpdated = credits.reduce((latest, credit) => credit.updated > latest ? credit.updated : latest, "");
+const maxValue = credits.reduce<number | null>((max, credit) => credit.valueUsd !== null && (max === null || credit.valueUsd > max) ? credit.valueUsd : max, null);
+---
+<Base title="Startup Credits" active="credits">
+  <section class="overview">
+    <div><h2>Startup credits, in one list.</h2><p>Cloud credits, API credits, and SaaS discounts available to early-stage startups. Every entry links to its source and shows when it was last checked.</p></div>
+    <dl class="stats-strip">
+      <div><dt>Programs</dt><dd>{credits.length}</dd></div>
+      <div><dt>Providers</dt><dd>{providers.size}</dd></div>
+      <div><dt>Categories</dt><dd>{categories.length}</dd></div>
+      <div><dt>Max value</dt><dd>{maxValue === null ? "—" : `$${maxValue.toLocaleString("en-US")}`}</dd></div>
+      <div><dt>Last updated</dt><dd class="mono">{latestUpdated}</dd></div>
+    </dl>
+  </section>
+  <CreditsTable credits={credits} />
+</Base>

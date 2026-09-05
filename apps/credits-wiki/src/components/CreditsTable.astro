@@ -1,0 +1,37 @@
+---
+import { CATEGORY_LABELS, STAGE_LABELS, type Credit } from "@wholeearth/credits-data";
+interface Props { credits: Credit[]; caption?: string; }
+const { credits, caption = "Programs" } = Astro.props;
+---
+<section class="table-section">
+  <div class="section-heading"><h3>{caption}</h3><span>{credits.length} programs</span></div>
+  <div class="table-wrap">
+    <table data-enhanced-table="true">
+      <thead><tr>
+        <th class="sortable" data-type="text" scope="col">Program <span class="sort-indicator"></span></th>
+        <th class="sortable" data-type="text" scope="col">Provider <span class="sort-indicator"></span></th>
+        <th class="sortable" data-type="text" scope="col">Category <span class="sort-indicator"></span></th>
+        <th class="sortable" data-type="number" scope="col">Value <span class="sort-indicator"></span></th>
+        <th class="sortable" data-type="text" scope="col">Duration <span class="sort-indicator"></span></th>
+        <th class="sortable" data-type="text" scope="col">Stages <span class="sort-indicator"></span></th>
+        <th scope="col">Eligibility</th><th scope="col">Apply</th><th scope="col">Updated</th>
+      </tr></thead>
+      <tbody>
+        {credits.map((credit) => {
+          const search = [credit.program, credit.provider, credit.slug, CATEGORY_LABELS[credit.category], ...credit.tags, credit.value].join(" ").toLowerCase();
+          return <tr data-search={search}>
+            <td data-sort={credit.program}><a class="primary-link" href={`/credits/${credit.slug}`}>{credit.program}</a><span class="subtle mono">{credit.slug}</span></td>
+            <td data-sort={credit.provider}>{credit.provider}</td>
+            <td data-sort={CATEGORY_LABELS[credit.category]}><a href={`/categories/${credit.category}`}>{CATEGORY_LABELS[credit.category]}</a></td>
+            <td data-sort={credit.valueUsd ?? -1}>{credit.value}</td>
+            <td>{credit.duration}</td><td>{credit.stages.map((stage) => STAGE_LABELS[stage]).join(", ")}</td>
+            <td title={credit.eligibility}>{credit.eligibility}</td>
+            <td data-sort={credit.provider}><a href={credit.applyUrl} target="_blank" rel="noopener noreferrer">Apply ↗</a></td>
+            <td class="mono">{credit.updated}</td>
+          </tr>;
+        })}
+      </tbody>
+    </table>
+  </div>
+  <p class="empty-message">No programs match.</p>
+</section>

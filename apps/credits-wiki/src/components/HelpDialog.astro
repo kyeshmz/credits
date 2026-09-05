@@ -1,0 +1,16 @@
+<dialog id="help-modal" aria-labelledby="help-modal-title">
+  <div class="header"><h2 id="help-modal-title">How to use</h2><button id="close" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+  <div class="body">
+    <h2>What this is</h2><p>A community-maintained list of credit and discount programs for startups.</p>
+    <h2>Sorting and search</h2><p>Click a column header to sort. Press Ctrl K or Cmd K to search.</p>
+    <h2>Contributing</h2><p>Edit <code>packages/credits-data/src/credits.json</code> and open a pull request. Each entry needs a source URL and an updated date.</p>
+  </div>
+  <div class="footer"><a href="https://github.com/wholeearth/oss">View the project on GitHub ↗</a></div>
+</dialog>
+<script>
+  const help = document.querySelector<HTMLButtonElement>("#help");
+  const modal = document.querySelector<HTMLDialogElement>("#help-modal");
+  const close = document.querySelector<HTMLButtonElement>("#close");
+  help?.addEventListener("click", () => modal?.showModal());
+  close?.addEventListener("click", () => modal?.close());
+</script>

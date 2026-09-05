@@ -1,0 +1,12 @@
+---
+import { CATEGORY_LABELS, credits } from "@wholeearth/credits-data";
+const searchIndex = credits.map(({ slug, provider, program, category, value, duration, tags }) => ({ slug, provider, program, category, categoryLabel: CATEGORY_LABELS[category], value, duration, tags }));
+---
+<dialog id="search-modal" class="search-modal" aria-labelledby="search-modal-title">
+  <h2 id="search-modal-title" class="sr-only">Search</h2>
+  <div class="search-field"><svg class="search-field-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input id="search-input" type="text" placeholder="Search programs, providers, and categories" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list" /><span class="search-escape">Esc</span></div>
+  <div class="search-count" id="search-count"></div>
+  <div class="search-results" id="search-results" role="listbox"></div>
+  <p class="search-empty" id="search-empty" hidden>No matching programs.</p>
+</dialog>
+<script type="application/json" id="search-index" set:html={JSON.stringify(searchIndex)}></script>

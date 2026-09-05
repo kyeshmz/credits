@@ -1,0 +1,39 @@
+---
+import { credits } from "@wholeearth/credits-data";
+import Header from "../components/Header.astro";
+import HelpDialog from "../components/HelpDialog.astro";
+import SearchDialog from "../components/SearchDialog.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+  active?: "credits" | "categories";
+}
+
+const { title, description = "An open-source wiki of startup credit programs", active } = Astro.props;
+const latestUpdated = credits.reduce((latest, credit) => credit.updated > latest ? credit.updated : latest, "");
+const pageTitle = title === "Startup Credits" ? title : `${title} · Startup Credits`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Rubik:wght@300..900&display=swap" />
+  </head>
+  <body>
+    <Header active={active} />
+    <main class="page-scroll">
+      <slot />
+      <p class="footer-note">Values and eligibility change often. Verify on the provider's page before relying on any entry. Last data update: {latestUpdated}.</p>
+    </main>
+    <HelpDialog />
+    <SearchDialog />
+  </body>
+</html>
