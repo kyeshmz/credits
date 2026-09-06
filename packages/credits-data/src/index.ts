@@ -54,6 +54,32 @@ assertCredits(raw);
 export const credits: Credit[] = [...raw].sort((a, b) => a.provider.localeCompare(b.provider) || a.program.localeCompare(b.program));
 export const categories: Category[] = CATEGORIES.filter((category) => credits.some((credit) => credit.category === category));
 
+/** Funding-stage order, earliest first. Used for filter option order and table sorting. */
+export const STAGE_ORDER: Record<Stage, number> = {
+  "pre-seed": 0,
+  seed: 1,
+  "series-a": 2,
+  any: 3
+};
+
+/** Stages present in the data, in earliest-first (`STAGES`) order. */
+export const stages: Stage[] = STAGES.filter((stage) => credits.some((credit) => credit.stages.includes(stage)));
+
+/** Earliest-stage rank of a credit, for sorting (lower sorts before higher). */
+export function stageRank(credit: Credit): number {
+  return Math.min(...credit.stages.map((stage) => STAGE_ORDER[stage]));
+}
+
+/**
+ * Credits eligible at `stage`. Programs marked `["any"]` accept every stage,
+ * so they match any specific stage filter. Passing `"any"` returns only the
+ * unrestricted programs.
+ */
+export function creditsByStage(stage: Stage): Credit[] {
+  if (stage === "any") return credits.filter((credit) => credit.stages.includes("any"));
+  return credits.filter((credit) => credit.stages.includes(stage) || credit.stages.includes("any"));
+}
+
 export function getCredit(slug: string): Credit | undefined {
   return credits.find((credit) => credit.slug === slug);
 }

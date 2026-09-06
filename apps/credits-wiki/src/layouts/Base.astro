@@ -35,5 +35,11 @@ const pageTitle = title === "Startup Credits" ? title : `${title} · Startup Cre
     </main>
     <HelpDialog />
     <SearchDialog />
+    <script>
+      import { enhanceTables } from "../scripts/table";
+      import { initSearch } from "../scripts/search";
+      enhanceTables();
+      initSearch();
+    </script>
   </body>
 </html>

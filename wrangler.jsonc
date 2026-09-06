@@ -1,0 +1,19 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "startup-credits",
+	"pages_build_output_dir": "./apps/credits-wiki/dist",
+	"compatibility_date": "2026-09-05",
+	"compatibility_flags": [
+		"nodejs_compat"
+	],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "startup-credits",
+			"database_id": "328cf074-b093-4534-b3b4-00ac5222b69b",
+			"preview_database_id": "DB",
+			"migrations_dir": "./migrations",
+			"remote": true
+		}
+	]
+}

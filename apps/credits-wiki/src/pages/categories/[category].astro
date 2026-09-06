@@ -1,0 +1,21 @@
+---
+import { CATEGORY_LABELS, categories, creditsByCategory, type Category } from "@wholeearth/credits-data";
+import Base from "../../layouts/Base.astro";
+import CreditsTable from "../../components/CreditsTable.astro";
+
+export function getStaticPaths() {
+  return categories.map((category) => ({ params: { category }, props: { category } }));
+}
+
+interface Props { category: Category; }
+const { category } = Astro.props;
+const label = CATEGORY_LABELS[category];
+const categoryCredits = creditsByCategory(category);
+---
+<Base title={label} active="categories">
+  <section class="detail-header">
+    <nav class="breadcrumbs" aria-label="Breadcrumbs"><a href="/">Credits</a><span>/</span><a href="/categories">Categories</a><span>/</span><span>{label}</span></nav>
+    <h2>{label}</h2><p>{categoryCredits.length} programs in this category.</p>
+  </section>
+  <CreditsTable credits={categoryCredits} caption={label} />
+</Base>

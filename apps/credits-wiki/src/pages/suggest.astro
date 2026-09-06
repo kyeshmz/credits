@@ -1,0 +1,27 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="Suggest a program" active="credits">
+  <section class="detail-header"><h2>Suggest a startup program</h2><p>Know a useful credit, discount, or free tier? Send it to the community directory for review.</p></section>
+  <form class="suggest-form" id="suggest-form">
+    <label>Provider<input name="provider" required maxlength="120" placeholder="Company name" /></label>
+    <label>Program<input name="program" required maxlength="200" placeholder="Offer or program name" /></label>
+    <label>Official URL<input name="url" type="url" required maxlength="500" placeholder="https://" /></label>
+    <label>Category<input name="category" required maxlength="80" placeholder="Cloud, AI, analytics..." /></label>
+    <label>Why is it useful?<textarea name="details" required maxlength="4000" rows="6" placeholder="Who is eligible and what does it include?"></textarea></label>
+    <label>Your name or email (optional)<input name="submitter" maxlength="200" /></label>
+    <button class="apply-button" type="submit">Submit for review</button><p id="suggest-status" role="status"></p>
+  </form>
+  <script>
+    const form = document.querySelector<HTMLFormElement>("#suggest-form");
+    const status = document.querySelector<HTMLElement>("#suggest-status");
+    if (!form || !status) throw new Error("Suggestion form is missing");
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const data = Object.fromEntries(new FormData(form));
+      const response = await fetch("/api/submissions", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(data) });
+      status.textContent = response.ok ? "Thanks. Your suggestion is queued for review." : "Please check the form and try again.";
+      if (response.ok) form.reset();
+    });
+  </script>
+</Base>

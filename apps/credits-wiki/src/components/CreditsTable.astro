@@ -1,33 +1,42 @@
 ---
-import { CATEGORY_LABELS, STAGE_LABELS, type Credit } from "@wholeearth/credits-data";
+import { CATEGORY_LABELS, STAGES, STAGE_LABELS, STAGE_ORDER, type Credit, type Stage } from "@wholeearth/credits-data";
 interface Props { credits: Credit[]; caption?: string; }
 const { credits, caption = "Programs" } = Astro.props;
+// Filter options, earliest stage first: "all" + every concrete stage present.
+// "any" is not a filter option — unrestricted programs match every filter.
+const filterStages: Stage[] = STAGES.filter((stage) => stage !== "any");
+const rank = (credit: Credit): number => Math.min(...credit.stages.map((stage) => STAGE_ORDER[stage]));
 ---
-<section class="table-section">
-  <div class="section-heading"><h3>{caption}</h3><span>{credits.length} programs</span></div>
+<section class="table-section" data-stage-table="true">
+  <div class="section-heading"><h3>{caption}</h3><span data-count>{credits.length} programs</span></div>
+  <div class="table-filters" role="group" aria-label={`Filter ${caption} by stage`}>
+    <span class="table-filters-label">Stage:</span>
+    <button type="button" data-stage-filter="all" aria-pressed="true">All</button>
+    {filterStages.map((stage) => <button type="button" data-stage-filter={stage} aria-pressed="false">{STAGE_LABELS[stage]}</button>)}
+  </div>
   <div class="table-wrap">
     <table data-enhanced-table="true">
       <thead><tr>
         <th class="sortable" data-type="text" scope="col">Program <span class="sort-indicator"></span></th>
-        <th class="sortable" data-type="text" scope="col">Provider <span class="sort-indicator"></span></th>
+        <th class="sortable" data-type="text" scope="col">From <span class="sort-indicator"></span></th>
         <th class="sortable" data-type="text" scope="col">Category <span class="sort-indicator"></span></th>
         <th class="sortable" data-type="number" scope="col">Value <span class="sort-indicator"></span></th>
         <th class="sortable" data-type="text" scope="col">Duration <span class="sort-indicator"></span></th>
-        <th class="sortable" data-type="text" scope="col">Stages <span class="sort-indicator"></span></th>
+        <th class="sortable" data-type="number" scope="col">Stages <span class="sort-indicator"></span></th>
         <th scope="col">Eligibility</th><th scope="col">Apply</th><th scope="col">Updated</th>
       </tr></thead>
       <tbody>
         {credits.map((credit) => {
           const search = [credit.program, credit.provider, credit.slug, CATEGORY_LABELS[credit.category], ...credit.tags, credit.value].join(" ").toLowerCase();
-          return <tr data-search={search}>
-            <td data-sort={credit.program}><a class="primary-link" href={`/credits/${credit.slug}`}>{credit.program}</a><span class="subtle mono">{credit.slug}</span></td>
-            <td data-sort={credit.provider}>{credit.provider}</td>
-            <td data-sort={CATEGORY_LABELS[credit.category]}><a href={`/categories/${credit.category}`}>{CATEGORY_LABELS[credit.category]}</a></td>
-            <td data-sort={credit.valueUsd ?? -1}>{credit.value}</td>
-            <td>{credit.duration}</td><td>{credit.stages.map((stage) => STAGE_LABELS[stage]).join(", ")}</td>
-            <td title={credit.eligibility}>{credit.eligibility}</td>
-            <td data-sort={credit.provider}><a href={credit.applyUrl} target="_blank" rel="noopener noreferrer">Apply ↗</a></td>
-            <td class="mono">{credit.updated}</td>
+          return <tr data-search={search} data-stages={credit.stages.join(" ")}>
+            <td data-label="Program" data-sort={credit.program}><a class="primary-link" href={`/credits/${credit.slug}`}>{credit.program}</a></td>
+            <td data-label="From" data-sort={credit.provider}>{credit.provider}</td>
+            <td data-label="Category" data-sort={CATEGORY_LABELS[credit.category]}><a href={`/categories/${credit.category}`}>{CATEGORY_LABELS[credit.category]}</a></td>
+            <td data-label="Value" data-sort={credit.valueUsd ?? -1}>{credit.value}</td>
+            <td data-label="Duration">{credit.duration}</td><td data-label="Stages" data-sort={rank(credit)}>{credit.stages.map((stage) => STAGE_LABELS[stage]).join(", ")}</td>
+            <td data-label="Eligibility" title={credit.eligibility}>{credit.eligibility}</td>
+            <td data-label="Apply" data-sort={credit.provider}><a href={credit.applyUrl} target="_blank" rel="noopener noreferrer">Apply ↗</a></td>
+            <td data-label="Updated" class="mono">{credit.updated}</td>
           </tr>;
         })}
       </tbody>

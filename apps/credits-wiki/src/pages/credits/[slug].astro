@@ -1,0 +1,87 @@
+---
+import { CATEGORY_LABELS, STAGE_LABELS, credits } from "@wholeearth/credits-data";
+import Base from "../../layouts/Base.astro";
+
+export function getStaticPaths() {
+  return credits.map((credit) => ({ params: { slug: credit.slug }, props: { credit } }));
+}
+
+interface Props {
+  credit: (typeof credits)[number];
+}
+
+const { credit } = Astro.props;
+const categoryLabel = CATEGORY_LABELS[credit.category];
+---
+<Base title={credit.program} description={credit.eligibility} active="credits">
+  <section class="detail-header">
+    <nav class="breadcrumbs" aria-label="Breadcrumbs">
+      <a href="/">Credits</a><span>/</span><a href={`/categories/${credit.category}`}>{categoryLabel}</a><span>/</span><span>{credit.program}</span>
+    </nav>
+    <h2>{credit.program}</h2>
+    <p>{credit.eligibility}</p>
+    <div class="code-line"><code>{credit.slug}</code></div>
+    <a class="apply-button" href={credit.applyUrl} target="_blank" rel="noopener noreferrer" style="margin-top: .875rem">Apply at {credit.provider} ↗</a>
+  </section>
+  <dl class="fact-grid">
+    <div><dt>Provider</dt><dd><a href={credit.website}>{credit.provider}</a></dd></div>
+    <div><dt>Category</dt><dd><a href={`/categories/${credit.category}`}>{categoryLabel}</a></dd></div>
+    <div><dt>Value</dt><dd>{credit.value}</dd></div>
+    <div><dt>Duration</dt><dd>{credit.duration}</dd></div>
+    <div><dt>Stages</dt><dd><span class="badge-list">{credit.stages.map((stage) => <span class="badge">{STAGE_LABELS[stage]}</span>)}</span></dd></div>
+    <div><dt>Updated</dt><dd class="mono">{credit.updated}</dd></div>
+  </dl>
+  <div class="detail-body">
+    <div>
+      <div class="block"><h3>Requirements</h3>{credit.requirements.length > 0 ? <ul>{credit.requirements.map((requirement) => <li>{requirement}</li>)}</ul> : <p>No published requirements.</p>}</div>
+      <div class="block"><h3>How to apply</h3><p>{credit.howToApply}</p></div>
+      {credit.notes && <div class="block"><h3>Notes</h3><p>{credit.notes}</p></div>}
+    </div>
+    <div>
+      <div class="block"><h3>Tags</h3><span class="badge-list">{credit.tags.map((tag) => <span class="badge">{tag}</span>)}</span></div>
+      <div class="block"><h3>Source</h3><a class="mono" href={credit.sourceUrl} target="_blank" rel="noopener noreferrer">{credit.sourceUrl}</a></div>
+    </div>
+  </div>
+  <section class="community-panel" data-feedback-slug={credit.slug}>
+    <div><h3>Community check</h3><p>Has this offer changed? Help keep the directory current.</p></div>
+    <div class="feedback-actions">
+      <button type="button" data-feedback-kind="relevant">Still relevant <span data-feedback-count="relevant">0</span></button>
+      <button type="button" data-feedback-kind="outdated">Outdated <span data-feedback-count="outdated">0</span></button>
+      <button type="button" data-feedback-kind="incorrect">Details incorrect</button>
+    </div>
+    <form class="feedback-form" data-feedback-form hidden>
+      <label for={`feedback-message-${credit.slug}`}>What should be checked?</label>
+      <textarea id={`feedback-message-${credit.slug}`} name="message" maxlength="2000" rows="3" placeholder="Tell us what changed (optional)"></textarea>
+      <button type="submit" class="apply-button">Send report</button><span data-feedback-status role="status"></span>
+    </form>
+  </section>
+  <details class="json-section"><summary>JSON</summary><pre>{JSON.stringify(credit, null, 2)}</pre></details>
+  <script>
+    const panel = document.querySelector<HTMLElement>("[data-feedback-slug]");
+    if (panel) {
+      const slug = panel.getAttribute("data-feedback-slug");
+      const formElement = panel.querySelector<HTMLFormElement>("[data-feedback-form]");
+      const statusElement = panel.querySelector<HTMLElement>("[data-feedback-status]");
+      const textareaElement = panel.querySelector<HTMLTextAreaElement>("textarea");
+      if (!formElement || !statusElement || !textareaElement) throw new Error("Feedback form is missing");
+      const feedbackForm: HTMLFormElement = formElement;
+      const feedbackStatus: HTMLElement = statusElement;
+      const feedbackTextarea: HTMLTextAreaElement = textareaElement;
+      let kind = "outdated";
+      fetch(`/api/feedback?slug=${encodeURIComponent(slug ?? "")}`).then((response) => response.ok ? response.json() : null).then((counts) => {
+        if (counts) for (const name of ["relevant", "outdated"]) { const count = panel.querySelector<HTMLElement>(`[data-feedback-count="${name}"]`); if (count) count.textContent = counts[name]; }
+      }).catch(() => {});
+      panel.querySelectorAll("[data-feedback-kind]").forEach((button) => button.addEventListener("click", () => {
+        kind = button.getAttribute("data-feedback-kind") ?? "outdated";
+        if (kind === "relevant") submit(); else feedbackForm.hidden = false;
+      }));
+      feedbackForm.addEventListener("submit", (event) => { event.preventDefault(); submit(); });
+      async function submit() {
+        const message = feedbackTextarea.value;
+        const response = await fetch("/api/feedback", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ slug, kind, message }) });
+        feedbackStatus.textContent = response.ok ? "Thanks for helping keep this current." : "Unable to send. Please try again.";
+        if (response.ok) feedbackForm.hidden = true;
+      }
+    }
+  </script>
+</Base>

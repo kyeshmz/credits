@@ -1,0 +1,9 @@
+---
+import { CATEGORY_LABELS, categories, creditsByCategory } from "@wholeearth/credits-data";
+import Base from "../../layouts/Base.astro";
+import CreditsTable from "../../components/CreditsTable.astro";
+---
+<Base title="Categories" active="categories">
+  <section class="detail-header"><h2>Categories</h2><p>Programs grouped by what they pay for.</p></section>
+  {categories.map((category) => <CreditsTable credits={creditsByCategory(category)} caption={CATEGORY_LABELS[category]} />)}
+</Base>
