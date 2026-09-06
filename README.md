@@ -1,35 +1,36 @@
 # Startup Credits
 
-Startups are leaving free money on the table.
+Startups miss out on free money all the time.
 
-Almost every cloud, AI, database, and SaaS company will pay you to try them — $5k here, $100k there, a year free over there. But the offers are scattered across hundreds of landing pages, partner portals, and paywalled directories, each with its own eligibility fine print and expiry. Nobody can keep track.
+Big tech companies give away credits so you try their tools. $5k here. $100k there. A free year somewhere else.
 
-This repo is an attempt to collect all of it in one place: an open, community-maintained wiki of startup credit programs, free tiers, and discounts. Cloud credits, API credits, free seats, waived fees — anything that saves an early-stage team real money.
+The problem: these deals live all over the web. Hard to find. Hard to track.
 
-## What counts
+This repo fixes that. One list. Every deal. In one place.
 
-- Startup credit programs (e.g. AWS Activate, Google for Startups, Azure, Cloudflare)
-- AI/API compute credits, database and devtool offers
-- SaaS discounts and free tiers worth claiming (analytics, support, sales, finance, productivity)
-- Anything with a public offer page, clear eligibility, and real dollar value
+## What goes here
 
-Every entry carries its source URL and the date it was last checked, so you can verify before you apply.
+- Cloud credits (AWS, Google, Azure, Cloudflare)
+- AI credits
+- Free tools and discounts for startups
 
-## Use it
+Each deal links to its source. Each shows when we last checked it.
 
-- Browse the list, filter by stage, sort by value, or press Ctrl/Cmd-K to search.
-- Each program has a detail page: what it's worth, how long it lasts, who qualifies, how to apply, and the raw JSON.
-- Values and eligibility change often. Always verify on the provider's page before relying on an entry.
+## How to use it
 
-## Help collect
+Search the list. Filter by your stage. Sort by value.
 
-Found free money we're missing? Two ways in:
+Click a deal to see what you get, who can get it, and how to apply.
 
-1. Hit **Suggest a program** on the site — it goes into a review queue.
-2. Open a pull request adding the entry directly (preferred — see `CONTRIBUTING.md`).
+Deals change fast. Always check the company page before you apply.
 
-Stale value, dead link, changed eligibility? Same two paths. The most useful contribution is re-verifying an old entry and bumping its check date.
+## Add a deal
 
-## Contribute
+See free money we missed?
 
-Technical setup, data schema, validation, CSV import, and deploy notes live in [`CONTRIBUTING.md`](./CONTRIBUTING.md).
+1. Click Suggest a program on the site.
+2. Or add it yourself with a pull request.
+
+Same for bad links or old info. Best help: recheck an old deal and update the date.
+
+How to work on this repo: see CONTRIBUTING.md.
